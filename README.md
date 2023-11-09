@@ -6,7 +6,7 @@
 
 In FS-Lite, emphasis is placed on:
 
-- **Getting out of your way**. Features definitions are immediately useable and testable, whether or not you use a featurestore.
+- **Getting out of your way**. Feature definitions are immediately useable and testable, whether or not you use a featurestore.
 - **Helping you document** a feature's logic, purpose, version, and dependencies.
 - Using a featurestore to **abstract away** storage, computations along dependency graphs, optimization, and caching details.
 
