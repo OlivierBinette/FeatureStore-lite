@@ -1,5 +1,7 @@
 # FeatureStore-Lite
 
+!!! (under construction / brainstorming / not ready for use) !!!
+
 **FeatureStore-Lite** (FS-Lite) is a lightweight feature store for individuals and small teams working with medium-sized data (up to the 100s of GB).
 
 There are three key concepts represented in FS-Lite, listed below.
@@ -18,17 +20,16 @@ That's it.
 
 ## Usage
 
-
-### Feature
+### Defining and Documenting Features
 
 In FS-Lite, features are simply functions with added metadata. The metadata is only used by `FeatureStore` objects to resolve dependency graphs, orchestrate computations, and cache feature values.
 
 For example, you can define features that rely on named columns:
 
 ```python
-from fs_lite import feature
+from fs_lite import feature, column
 
-@feature(dependencies=["price"])
+@feature(dependencies={"price": column("price")})
 def log10_price(input):
   """Compute the log10 of 'price'."""
   return log10(input["price"])
@@ -39,14 +40,6 @@ log10_price(df)
 ```
 
 And you can define features that rely on other features:
-
-```python
-@feature(dependencies=[log10_price])
-def log10log0_price(input):
-  return log10(input["log10_price"])
-```
-
-We recommend using column name placeholders by specifying a dictionary of dependencies with string keys and feature values. This provides the most clarity regarding input expectations:
 ```python
 @feature(dependencies={"logprice": log10_price})
 def log10log0_price(input):
@@ -59,8 +52,8 @@ Here's an example with full metadata specified:
   name="myFeature",  # Default is the function's name
   descr="Feature description",  # Default is the function's docstring
   version="1.0.0",  # default is "0.0.0"
-  id_column="index_column",  # Default is the list of dependency columns.
-  dependencies={
+  index_columns=["index_column"],  # Default is []
+  dependencies={  # Default is {}
     "column_1": first_feature,
     "column_2": second_feature
   }
@@ -69,5 +62,5 @@ def myFeature(input):
   pass
 ```
 
-
+### Using a FeatureStore for computation and retrieval.
 
