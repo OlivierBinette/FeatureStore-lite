@@ -1,0 +1,7 @@
+name: duckdb-featurestore
+
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+    - duckdb
