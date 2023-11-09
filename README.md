@@ -4,21 +4,22 @@
 
 **FeatureStore-Lite** (FS-Lite) is a lightweight feature store for individuals and small teams working with medium-sized data (up to the 100s of GB).
 
-There are three key concepts represented in FS-Lite, listed below.
-
-1. **Records:** Objects with unique identifiers and to which features are attached. Typically this is a row of data, such as `(vehicle_id, year, make, model, mileage)`.
-2. **Features:** Functions that compute new feature values for given records. For instance, the `value` feature could compute a vehicle's value based on its `year`, `make`, `model`, and `mileage`.
-3. **FeatureStore:** This orchestrates the efficient computation of new features as well as caching and storage. For example, when requesting the `value` feature for a given vehicle, a featurestore would first check if the feature has already been computed. If not, it computes the feature value based on its implementation and dependencies.
-
 In FS-Lite, emphasis is placed on:
 
-- Getting out of your way. Features definitions are immediately useable and testable, whether or not you use a featurestore.
-- Helping you document a feature's logic, purpose, version, and dependencies.
-- Using a featurestore to abstract away storage, computations along dependency graphs, optimization, and caching details.
+- **Getting out of your way**. Features definitions are immediately useable and testable, whether or not you use a featurestore.
+- **Helping you document** a feature's logic, purpose, version, and dependencies.
+- Using a featurestore to **abstract away** storage, computations along dependency graphs, optimization, and caching details.
 
-That's it. Feature can be defined in any computation framework. Featurestores are provided for pandas and duckdb backends.
+That's it. Feature can be defined in any computation framework. Featurestores are provided for pandas and duckdb backends, and can be user-defined for any other computation framework.
 
 ## Usage
+
+There are two key concepts represented in FS-Lite, listed below.
+
+1. **Features:** Functions that compute new feature values for given records. For instance, the `value` feature could compute a vehicle's value based on its `year`, `make`, `model`, and `mileage`.
+2. **FeatureStores:** These orchestrate the efficient computation of features as well as caching and storage. For example, when requesting the `value` feature for a given vehicle, a featurestore would first check if the feature has already been computed. If not, it computes the feature value based on its implementation and dependencies.
+
+We show how to use both of these concepts below.
 
 ### Defining and Documenting Features
 
