@@ -102,7 +102,7 @@ Feature factory:
 def one_hot(colname):
     @feature(
         name=f"{colname}_one_hot",
-        dependencies={"target": column("colname")}
+        dependencies={"target": column(colname)}
     )
     def lambd(table):
         return pd.get_dummies(table["target"])
