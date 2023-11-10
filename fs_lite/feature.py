@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
+from typing import Generic, TypeVar, Callable
 
-def feature(name=None, descr=None, version=None, index_columns=None, dependencies=None):
+def feature(name: str=None, descr: str=None, version: str=None, index_columns: list[str]=None, dependencies: dict[str, "Feature"]=None):
     """
     A decorator that transforms a function into a Feature object with additional metadata.
 
@@ -34,8 +35,10 @@ def feature(name=None, descr=None, version=None, index_columns=None, dependencie
         )
     return decorator
 
+T = TypeVar('T')
+
 @dataclass(frozen=True, slots=True)
-class Feature:
+class Feature(Generic[T]):
     """
     A class representing a feature in a data processing or analysis pipeline.
 
@@ -45,7 +48,7 @@ class Feature:
 
     Attributes:
     - name (str): The name of the feature.
-    - compute (callable): The function that performs the computation for this feature.
+    - compute (Callable): The function that performs the computation for this feature.
     - descr (str): A description of the feature.
     - version (str): The version of the feature.
     - id_columns (list): Identifier columns relevant to the feature.
@@ -59,28 +62,28 @@ class Feature:
     """
 
     name: str
-    compute: callable
+    compute: Callable[[T], T]
     descr: str = None
     version: str = None
     dependencies: dict = field(default_factory=dict)
     index_columns: list = field(default_factory=list)
 
-    def __call__(self, input, *args, **kwargs):
-        return self.compute(input, *args, **kwargs)
+    def __call__(self, input: T) -> T:
+        return self.compute(input)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Feature(name={self.name}, compute={self.compute}, version={self.version}, index_columns={self.index_columns}, dependencies={ {key: "Feature("+value.name+")" for key, value in self.dependencies.items()} })'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self.name, self.descr, self.version, tuple(self.index_columns), tuple(self.dependencies), self.compute.__code__))
 
     @classmethod
-    def _from_function(cls, func, name=None, descr=None, version=None, index_columns=field(default_factory=list), dependencies=field(default_factory=dict)):
+    def _from_function(cls, func: Callable[[T], T], name: str=None, descr: str=None, version: str=None, index_columns: list[str]=field(default_factory=list), dependencies: dict[str, "Feature"]=field(default_factory=dict)):
         name = func.__name__ if name is None else name
         descr = func.__doc__ if descr is None else descr
         return cls(name=name, compute=func, descr=descr, version=version, index_columns=index_columns, dependencies=dependencies)
-    
-def column(name):
+
+def column(name: str):
     """
     Create a Feature instance that represents a given column.
 
@@ -95,4 +98,4 @@ def column(name):
     >>> price_column
     Feature(name='price', compute=<function <lambda> at 0x...>, descr='Identifies a given column by name.', version='1.0.0', index_columns=[], dependencies={})
     """
-    return Feature(name=name, compute=lambda table: None, descr='Identifies a given column by name.', version='1.0.0')
+    return Feature(name=name, compute=None, descr='Identifies a given column by name.', version='1.0.0')

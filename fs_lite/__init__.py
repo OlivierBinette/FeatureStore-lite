@@ -1,1 +1,1 @@
-from feature import feature, column
+from fs_lite.feature import feature, column

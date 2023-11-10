@@ -63,5 +63,61 @@ def myFeature(input):
   pass
 ```
 
+#### Iris Dataset Example
+```python
+import pandas as pd
+from sklearn.datasets import load_iris
+
+iris = load_iris(as_frame=True)
+data = pd.concat([iris.data, iris.target], axis=1)
+data
+```
+
+Column feature:
+
+```python
+from fs_lite import column
+
+column_feature = column("sepal length (cm)")
+column_feature(data)
+```
+
+One-hot encoding feature:
+
+```python
+from fs_lite import feature
+
+@feature(
+    dependencies={"target": column("target")},
+)
+def target_one_hot_encoding(table):
+    return pd.get_dummies(table["target"])
+
+target_one_hot_encoding(data)
+```
+
+Feature factory:
+
+```python
+def one_hot(colname):
+    @feature(
+        name=f"{colname}_one_hot",
+        dependencies={"target": column("colname")}
+    )
+    def lambd(table):
+        return pd.get_dummies(table["target"])
+
+    return lambd
+
+one_hot("target")(data)
+```
+
 ### Using a FeatureStore for computation and retrieval.
+
+```python
+from fs_lite.pandas import PandasFeatureStore
+
+fs = PandasFeatureStore()
+fs.compute(data, [column("sepal length (cm)"), one_hot("target")])
+```
 
